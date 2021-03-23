@@ -14,6 +14,19 @@ def dict_factory(cursor, row):
 
 @app.route('/', methods=['POST'])
 def home():
+	id = request.form["id"]
+	name_of_song = request.form["name_of_song"]
+	connection = sqlite3.connect(currentdirectory + "\Songfile.db")
+	cursor = connection.cursor()
+	if (query1 = "INSERT INTO Songfile VALUES ():
+	    print ("its a song" ) 
+	    
+	elif 
+	query1 = "INSERT INTO Songfile VALUES (
+	    print ('its a podcast") 
+	else
+	query1 = "INSERT INTO Songfile VALUES (
+		    print ('its an audiobook file") 
     return '''<h1>Distant Reading Archive</h1>
 <p>A prototype API for distant reading of science fiction novels.</p>'''
 
