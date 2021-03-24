@@ -47,9 +47,7 @@ def api_all():
     conn.row_factory = dict_factory
     cur = conn.cursor()
     all_books = cur.execute('SELECT * FROM books;').fetchall()
-			   
-
-    return jsonify(all_books)
+return jsonify(Songfile)
    
 
 @app.route('/api/v1/resources/books/all', methods=['PUT'])
@@ -57,7 +55,7 @@ def api_all():
     conn = sqlite3.connect('Songfile.db')
     conn.row_factory = dict_factory
     cur = conn.cursor()
-    all_books = cur.execute('SELECT * FROM books;').fetchall()
+    all_books = cur.execute('SELECT * FROMongfile ;').fetchall()
 			   
 
     return jsonify(all_books)
@@ -77,10 +75,10 @@ def api_all():
     cur = conn.cursor()
     all_books = cur.execute('SELECT * FROM books;').fetchall()
 
-    return jsonify(all_books)
+    return jsonify(songs)
 
 
-    return jsonify(all_books)
+    
 
 
 
