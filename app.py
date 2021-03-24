@@ -10,33 +10,55 @@ def dict_factory(cursor, row):
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
+@app.route('/')
+def main():
+    return render template (Audio.html)	
 
 
 @app.route('/', methods=['POST'])
 def home():
-	id = request.form["id"]
+    id = request.form["id"]
 	name_of_song = request.form["name_of_song"]
+	duration_in_seconds = request.form["duration_in_seconds"]
+	Uploaded_time = request.form["Uploaded_time"]
+	Host = request.form["Host"]
+	Participants = request.form["Participants"]
+	Title_of_the_audiobook =  request.form["Title_of_the_audiobook"]
+	Author_of_the_title =  request.form["Author_of_the_title"]
+	Narrator =  request.form["Narrator"]
+	Duration_in_number_of_seconds =  request.form["Duration_in_number_of_seconds"]
+	Uploaded_time =  request.form["Uploaded_time"]
+	
 	connection = sqlite3.connect(currentdirectory + "\Songfile.db")
-	cursor = connection.cursor()
-	if (query1 = "INSERT INTO Songfile VALUES ():
-	    print ("its a song" ) 
-	    
-	elif 
-	query1 = "INSERT INTO Songfile VALUES (
-	    print ('its a podcast") 
-	else
-	query1 = "INSERT INTO Songfile VALUES (
-		    print ('its an audiobook file") 
-    return '''<h1>Distant Reading Archive</h1>
-<p>A prototype API for distant reading of science fiction novels.</p>'''
-
-
-@app.route('/api/v1/resources/books/all', methods=['PUT'])
+	cursor = connection.cursor() 
+	a= "INSERT INTO Songfile VALUES ({ID} , {name_of_song},  {duration_in_seconds}, {Uploaded_time}"
+	b= "INSERT INTO Songfile VALUES ({ID} , {name_of_song},  {duration_in_seconds}, {Uploaded_time}, {Host}, {Participants}"
+	c= "INSERT INTO Songfile VALUES ({ID} , {Title_of_the_audiobook},  {Author_of_the_title}, {Narrator}, {Duration_in_number_of_seconds}, {Uploaded_time}"
+	if (query1 = a)
+	cursor.execute (query1) 
+	elif (query2 = b)
+	cursor.execute (query2) 
+	else (query3 = c
+	cursor.execute (query3)  
+	      
+	      @app.route('/api/v1/resources/books/all', methods=['GET'])
 def api_all():
-    conn = sqlite3.connect('books.db')
+    conn = sqlite3.connect('Songfile.db')
     conn.row_factory = dict_factory
     cur = conn.cursor()
     all_books = cur.execute('SELECT * FROM books;').fetchall()
+			   
+
+    return jsonify(all_books)
+   
+
+@app.route('/api/v1/resources/books/all', methods=['PUT'])
+def api_all():
+    conn = sqlite3.connect('Songfile.db')
+    conn.row_factory = dict_factory
+    cur = conn.cursor()
+    all_books = cur.execute('SELECT * FROM books;').fetchall()
+			   
 
     return jsonify(all_books)
 
