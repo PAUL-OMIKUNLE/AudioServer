@@ -43,7 +43,7 @@ audio_schema = AudioSchema()
 audio_schema = AudioSchema(many=True)
 
 
-# endpoint to create new user
+# endpoint to create new audio
 @app.route("/user", methods=["POST"])
 def add_user():
     #insert null where it not apllicable
