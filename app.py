@@ -1,124 +1,127 @@
-import flask
-from flask import request, jsonify
-import sqlite3
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+import os
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
-
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-@app.route('/')
-def main():
-    return render template (Audio.html)	
+app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'crud.sqlite')
+db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 
-@app.route('/', methods=['POST'])
-def home():
-    id = request.form["id"]
-	name_of_song = request.form["name_of_song"]
-	duration_in_seconds = request.form["duration_in_seconds"]
-	Uploaded_time = request.form["Uploaded_time"]
-	Host = request.form["Host"]
-	Participants = request.form["Participants"]
-	Title_of_the_audiobook =  request.form["Title_of_the_audiobook"]
-	Author_of_the_title =  request.form["Author_of_the_title"]
-	Narrator =  request.form["Narrator"]
-	Duration_in_number_of_seconds =  request.form["Duration_in_number_of_seconds"]
-	Uploaded_time =  request.form["Uploaded_time"]
-	
-	connection = sqlite3.connect(currentdirectory + "\Songfile.db")
-	cursor = connection.cursor() 
-	a= "INSERT INTO Songfile VALUES ({ID} , {name_of_song},  {duration_in_seconds}, {Uploaded_time}"
-	b= "INSERT INTO Songfile VALUES ({ID} , {name_of_song},  {duration_in_seconds}, {Uploaded_time}, {Host}, {Participants}"
-	c= "INSERT INTO Songfile VALUES ({ID} , {Title_of_the_audiobook},  {Author_of_the_title}, {Narrator}, {Duration_in_number_of_seconds}, {Uploaded_time}"
-	if (query1 = a)
-	cursor.execute (query1) 
-	elif (query2 = b)
-	cursor.execute (query2) 
-	else (query3 = c
-	cursor.execute (query3)  
-	      
-	      @app.route('/api/v1/resources/books/all', methods=['GET'])
-def api_all():
-    conn = sqlite3.connect('Songfile.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-    all_books = cur.execute('SELECT * FROM books;').fetchall()
-return jsonify(Songfile)
-   
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name_of_song = db.Column(db.String(100), unique=True)
+    Duration_in_seconds = db.Column(db.Integer, primary_key=True)
+    Uploaded_time = db.Column(db.Datetime, primary_key=True)
+    Participants = db.Column(db.String(100), unique=True)
+    Title_of_the_audiobook = db.Column(db.String(100), unique=True)
+    Author_of_the_title = db.Column(db.String(100), unique=True)
+    Narrator = db.Column(db.String(100), unique=True)
+    Host = db.Column(db.String(100), unique=True)
 
-@app.route('/api/v1/resources/books/all', methods=['PUT'])
-def api_all():
-    conn = sqlite3.connect('Songfile.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-    all_books = cur.execute('SELECT * FROMongfile ;').fetchall()
-			   
-
-    return jsonify(all_books)
-
-@app.route('/api/v1/resources/books/all', methods=['DELETE'])
-def api_all():
-    conn = sqlite3.connect('books.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-    all_books = cur.execute('SELECT * FROM books;').fetchall()
-	
-	
-	@app.route('/api/v1/resources/books/all', methods=['READ'])
-def api_all():
-    conn = sqlite3.connect('books.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-    all_books = cur.execute('SELECT * FROM books;').fetchall()
-
-    return jsonify(songs)
+    def __init__(self, id,  name_of_song, Duration_in_seconds, Uploaded_time, Participants, Title_of_the_audiobook , Author_of_the_title, Narrator, Host):
+        self.id = id
+        self.name_of_song = name_of_song
+        self.Duration_in_seconds = Duration_in_seconds
+        self.Uploaded_time = Uploaded_time
+        self.Participants = Participants
+        self.Title_of_the_audiobook = Title_of_the_audiobook
+        self.Author_of_the_title = Author_of_the_title
+        self.Narrator = Narrator
+        self.Host = Host
 
 
-    
+class AudioSchema(ma.Audio):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'name_of_song', 'Duration_in_seconds', 'Uploaded_time', 'Participants', 'Title_of_the_audiobook', 'Author_of_the_title', 'Narrator', 'Host' )
+
+
+audio_schema = AudioSchema()
+audio_schema = AudioSchema(many=True)
+
+
+# endpoint to create new user
+@app.route("/user", methods=["POST"])
+def add_user():
+    #insert null where it not apllicable
+    id = request.json['id']
+    name_of_song = request.json['name_of_song']
+    Duration_in_seconds = request.json['Duration_in_seconds']
+    Uploaded_time = request.json['Uploaded_time']
+    Participants = request.json['Participants']
+    Title_of_the_audiobook = request.json['Title_of_the_audiobook']
+    Author_of_the_title = request.json['Author_of_the_title']
+    Narrator = request.json['Narrator']
+    Host = request.json['Host']
+    new_audio = audio('id', 'name_of_song', 'Duration_in_seconds', 'Uploaded_time', 'Participants', 'Title_of_the_audiobook', 'Author_of_the_title', 'Narrator', 'Host' )
+
+    db.session.add(new_audio)
+    db.session.commit()
+
+    return jsonify(new_audio)
+
+
+# endpoint to show all audio
+@app.route("/user", methods=["GET"])
+def get_audio():
+    all_audio = Audio.query.all()
+    result = audio_schema.dump(all_audio)
+    return jsonify(result.data)
+
+
+# endpoint to get audio detail by id
+@app.route("/user/<id>", methods=["GET"])
+def audio_detail(id):
+     = Audio.query.get(id)
+    return audio_schema.jsonify(user)
+
+
+# endpoint to update audio
+@app.route("/audio/<id>", methods=["PUT"])
+def audio_update(id):
+    audio = Audio.query.get(id)
+    name_of_song = request.json['name_of_song']
+    Duration_in_seconds = request.json['Duration_in_seconds']
+    Uploaded_time = request.json['Uploaded_time']
+    Participants = request.json['Participants']
+    Title_of_the_audiobook = request.json['Title_of_the_audiobook']
+    Author_of_the_title = request.json['Author_of_the_title']
+    Narrator = request.json['Narrator']
+    Host = request.json['Host']
+    audio.email = email
+    audio.username = username
+
+    db.session.commit()
+    return audio_schema.jsonify(user)
+
+
+# endpoint to delete audio
+@app.route("/user/<id>", methods=["DELETE"])
+def audio_delete(id):
+    audio = Audio.query.get(id)
+    db.session.delete(audio)
+    db.session.commit()
+
+    return audio_schema.jsonify(user)
+#error handling 
+@app.errorhandler(200)
+def Action_is_successful(e):
+    return "<h1>200 OK</h1><p>Action is successful.</p>", 200
+
+@app.errorhandler(400)
+def The_request_is_invalid(a):
+    return "<h1>400 OK</h1><p>The request is invalid.</p>", 400
+
+@app.errorhandler(500)
+def Any_error(b):
+    return "<h1>500 OK</h1><p> internal server error .</p>", 500
 
 
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
-
-@app.route('/api/v1/resources/books', methods=['GET'])
-def api_filter():
-    query_parameters = request.args
-
-    id = query_parameters.get('id')
-    published = query_parameters.get('published')
-    author = query_parameters.get('author')
-
-    query = "SELECT * FROM books WHERE"
-    to_filter = []
-
-    if id:
-        query += ' id=? AND'
-        to_filter.append(id)
-    if published:
-        query += ' published=? AND'
-        to_filter.append(published)
-    if author:
-        query += ' author=? AND'
-        to_filter.append(author)
-    if not (id or published or author):
-        return page_not_found(404)
-
-    query = query[:-4] + ';'
-
-    conn = sqlite3.connect('books.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-
-    results = cur.execute(query, to_filter).fetchall()
-
-    return jsonify(results)
-
-app.run()
+if __name__ == '__main__':
+    app.run(debug=True)
